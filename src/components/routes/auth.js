@@ -7,12 +7,12 @@ const jwt = require('jsonwebtoken')
 const {JWT_SECRET}=require('../keys')
 const requireLogin = require('../middlewares/requireLogin')
 
-router.get('/',(req,res)=>{
-    res.send("hell0")
-})
+// router.get('/',(req,res)=>{
+//     res.send("hell0")
+// })
 
 router.get('/protected',requireLogin,(req,res)=>{
-    res.send("Yup this is ur profile !");
+    res.send(req.user);
 })
 router.post('/signUp',(req,res)=>{
     const {email,name,password}=req.body
@@ -59,6 +59,7 @@ router.post('/signIn',(req,res)=>{
             return res.status(422).json({error:"Enter valid username and password"})
         }
         bcrypt.compare(password,savedUser.password,(matchedUser)=>{
+            console.log(savedUser)
             if(matchedUser){//case where email and password do not match
                 const token = jwt.sign({id:savedUser._id},JWT_SECRET)
                 return res.json({token:token})

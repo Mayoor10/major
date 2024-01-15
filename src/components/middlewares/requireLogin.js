@@ -12,13 +12,15 @@ module.exports = (req,res,next)=>{
         if(err){
             return res.status(401).json({error:"You must be logged in"})
         }
-        const {_id}=payload
-        User.findById(_id)
-        .then((userData)=>{
-            req.name=userData
+        const {_id}=payload//what is going onn here??
+        console.log(_id)
+        User.findById(_id)//and here !!
+        .then(userData=>{
+            console.log(userData)
+            req.user=userData
+            next();
         })
         .catch((err)=>{console.log(err)})
-        next();
     })
     
 }
