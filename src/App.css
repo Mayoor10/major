@@ -1,3 +1,6 @@
 .App {
     margin: auto 10px;
   }
+input{
+  width:100%;
+}
