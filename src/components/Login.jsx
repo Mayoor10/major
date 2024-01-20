@@ -169,20 +169,40 @@ const InputContainer = styled.div`
   }
 `;
 
-const SubmitContainer = styled.div`
-  text-align: center;
-  margin-top: 16px;
-`;
+// const SubmitContainer = styled.div`
+// padding: 20px;
+//   text-align: center;
+//   margin-top: 16px;
+// `;
 const Icons = styled.div`
   margin:15px
+  background-color:red;
 `;
-const Inputs = styled.div`
+// const Inputs = styled.div`
   
   
-`;
+// `;
 
-const SubmitButton = styled.div`
+// const SubmitButton = styled.div`
+//   width:75%;
+//   padding: 20px;
+//   background-color: #0a66c2;
+//   color: #fff;
+//   padding: 14px 24px;
+//   border-radius: 24px;
+//   cursor: pointer;
+//   font-weight: 600;
+//   transition: background-color 0.3s ease;
+//   align-self: center;
+
+//   &:hover {
+//     background-color: #004080;
+//   }
+// `;
+
+const Button = styled.div`
   width:75%;
+  padding: 20px;
   background-color: #0a66c2;
   color: #fff;
   padding: 14px 24px;
@@ -265,30 +285,28 @@ const Login = (props) => {
         </Hero>
         <Form>
           <InputContainer>
-          <Icons>
-            <img src={emailIcon} alt="" />
-          </Icons>
-          <Inputs>
-            <input type="email" placeholder='Email' />
-          </Inputs>
+            <Icons>
+              <img src={emailIcon} alt="" />
+            </Icons>
+            <Inputs>
+              <input type="email" placeholder='Email' />
+            </Inputs>
           </InputContainer>
           <InputContainer>
-          <Icons>
+            <Icons>
 
-            <img src={passwordIcon} alt="" />
-          </Icons>
-          <Inputs>
-            <input type="password" placeholder='Password' />
-          </Inputs>
+              <img src={passwordIcon} alt="" />
+            </Icons>
+            <Inputs>
+              <input type="password" placeholder='Password' />
+            </Inputs>
           </InputContainer>
-          <SubmitContainer>
-            <SubmitButton>Sign In</SubmitButton>
-          </SubmitContainer>
+          <Button>Sign In</Button>
           <AccountText>Not a member? <a href="/SignUp">Sign Up</a></AccountText>
-        <GoogleButton onClick={() => props.signIn()}>
-          <img src="/images/google.svg" alt="" />
-          Continue with Google
-        </GoogleButton>
+          <GoogleButton onClick={() => props.signIn()}>
+            <img src="/images/google.svg" alt="" />
+            Continue with Google
+          </GoogleButton>
         </Form>
       </Section>
     </Container>
