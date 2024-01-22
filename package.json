@@ -2,6 +2,7 @@
   "name": "careersync",
   "private": true,
   "version": "0.0.0",
+  "proxy": "http://localhost:5000",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -9,10 +10,16 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@chakra-ui/react": "^2.8.2",
+    "@emotion/react": "^11.11.3",
+    "@emotion/styled": "^11.11.0",
+    "@mui/material": "^5.15.5",
     "axios": "^1.4.0",
     "bcrypt": "^5.1.1",
+    "cors": "^2.8.5",
     "firebase": "^10.1.0",
     "firebase-tools": "^12.4.7",
+    "framer-motion": "^10.18.0",
     "har-validator": "^5.1.5",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.0.4",

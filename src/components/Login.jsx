@@ -26,7 +26,7 @@ const Nav = styled.nav`
   flex-wrap: nowrap;
 
   & img {
-    width: 90px;
+    width: 120px;
   }
 `;
 
@@ -109,8 +109,8 @@ const Hero = styled.div`
 
   h1 {
     padding-bottom: 0;
-    width: 70%;
-    font-size: 32px;
+    width: 50%;
+    font-size: 53px;
     color: #2977c9;
     font-weight: 100;
     margin-bottom: 24px;
@@ -138,9 +138,9 @@ const Hero = styled.div`
 `;
 
 const Form = styled.div`
-  height:500px;
-  background-color:red;
-  margin-top: 10px;
+  height:400px;
+  // background-color:red;
+  // margin-top: 10px;
   width: 500px;
   display:flex;
   flex-direction:column;
@@ -154,58 +154,26 @@ const Form = styled.div`
 const InputContainer = styled.div`
   display: flex;
   margin-bottom: 6px;
-  justify-content:left;
-  align-self:center;
+  gap:10px;
+  align-items: center;
 
-  img {
-    margin-bottom: 8px;
-  }
-
-  input {
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 16px;
-  }
 `;
 
-// const SubmitContainer = styled.div`
-// padding: 20px;
-//   text-align: center;
-//   margin-top: 16px;
-// `;
+
 const Icons = styled.div`
+  width:5%
   margin:15px
   background-color:red;
 `;
-// const Inputs = styled.div`
-  
-  
-// `;
 
-// const SubmitButton = styled.div`
-//   width:75%;
-//   padding: 20px;
-//   background-color: #0a66c2;
-//   color: #fff;
-//   padding: 14px 24px;
-//   border-radius: 24px;
-//   cursor: pointer;
-//   font-weight: 600;
-//   transition: background-color 0.3s ease;
-//   align-self: center;
 
-//   &:hover {
-//     background-color: #004080;
-//   }
-// `;
-
-const Button = styled.div`
+const SubmitButton = styled.div`
+text-align: center;
+  margin-top: 16px;
   width:75%;
-  padding: 20px;
   background-color: #0a66c2;
   color: #fff;
-  padding: 14px 24px;
+  padding: 12px 24px;
   border-radius: 24px;
   cursor: pointer;
   font-weight: 600;
@@ -216,6 +184,7 @@ const Button = styled.div`
     background-color: #004080;
   }
 `;
+
 
 
 const AccountText = styled.div`
@@ -234,13 +203,23 @@ const AccountText = styled.div`
   }
 `;
 
+const Input = styled.input`
+width: 90%; 
+border: none;
+outline: none;
+padding: 12px;
+border: 1px solid #ccc;
+border-radius: 10px;
+font-size: 16px;
+`;
+
 const GoogleButton = styled.button`
   display: flex;
   justify-content: center;
   align-items: center;
   background-color: #fff;
   height: 45px;
-  width: 75%;
+  width: 85%;
   border-radius: 28px;
   box-shadow: inset 0 0 0 1px rgb(0 0 0 / 60%),
     inset 0 0 0 2px rgb(0 0 0 / 0%) inset 0 0 0 1px rgb(0 0 0 / 0);
@@ -288,20 +267,19 @@ const Login = (props) => {
             <Icons>
               <img src={emailIcon} alt="" />
             </Icons>
-            <Inputs>
-              <input type="email" placeholder='Email' />
-            </Inputs>
+            <Input type="email" placeholder='Email' />
+
           </InputContainer>
           <InputContainer>
             <Icons>
-
               <img src={passwordIcon} alt="" />
             </Icons>
-            <Inputs>
-              <input type="password" placeholder='Password' />
-            </Inputs>
+            <Input type="password" placeholder='Password' />
           </InputContainer>
-          <Button>Sign In</Button>
+
+          <SubmitButton>Sign In</SubmitButton>
+
+
           <AccountText>Not a member? <a href="/SignUp">Sign Up</a></AccountText>
           <GoogleButton onClick={() => props.signIn()}>
             <img src="/images/google.svg" alt="" />
