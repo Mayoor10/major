@@ -4,6 +4,10 @@ import { connect } from "react-redux";
 import { signInAPI } from "../actions";
 import { Navigate } from "react-router-dom";
 import PropTypes from 'prop-types';
+import { useState } from "react";
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
+import { useNavigate } from 'react-router-dom';
 
 // Import images
 import emailIcon from "../../public/images/email.png";
@@ -245,7 +249,66 @@ const GoogleButton = styled.button`
 
 // React component
 const Login = (props) => {
+
+  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('');
+  const [alertData, setAlertData] = useState({ error: null, message: null });
+  const navigate = useNavigate();
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setOpen(false);
+  };
+  const [open, setOpen] = useState(false);
+
+  const handleClick = () => {
+    setOpen(true);
+  };
+  const isValidEmail = () => {
+    // Simple email validation using a regular expression
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const Data = () => {
+    if (!isValidEmail()) {
+      setAlertData({ error: 'Invalid Email !!', message: null });
+      handleClick();
+      return;
+    }
+    fetch('http://localhost:5000/signIn', {
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        password: password,
+        email: email,
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.error) {
+          setAlertData({ error: data.error, message: null });
+        } else {
+          localStorage.setItem("jwt",data.token)
+          localStorage.setItem("user",JSON.stringify(data))
+          setAlertData({ error: null, message: data.message });
+          console.log(data);
+          navigate('/home')
+
+        }
+        handleClick(); // Trigger Snackbar when data is received
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+        // Handle error appropriately, perhaps set an error state
+      });
+  };
   return (
+    <>
     <Container>
       {props.user && <Navigate to="/home" />}
       <Nav>
@@ -267,17 +330,19 @@ const Login = (props) => {
             <Icons>
               <img src={emailIcon} alt="" />
             </Icons>
-            <Input type="email" placeholder='Email' />
+            <input type="email" placeholder='Email'
+          value={email} onChange={(e)=>setEmail(e.target.value)}/>
 
           </InputContainer>
           <InputContainer>
             <Icons>
               <img src={passwordIcon} alt="" />
             </Icons>
-            <Input type="password" placeholder='Password' />
+            <input type="password" placeholder='Password'
+          value = {password} onChange={(e)=>{setPassword(e.target.value)}}/>
           </InputContainer>
 
-          <SubmitButton>Sign In</SubmitButton>
+          <SubmitButton onClick={() => Data()}>Sign In</SubmitButton>
 
 
           <AccountText>Not a member? <a href="/SignUp">Sign Up</a></AccountText>
@@ -288,6 +353,16 @@ const Login = (props) => {
         </Form>
       </Section>
     </Container>
+      <Snackbar open={open} autoHideDuration={1000} onClose={handleClose}>
+        <Alert
+          onClose={handleClose}
+          severity={alertData.error ? 'error' : 'success'}
+          variant="filled"
+          sx={{ width: '100%' }}
+        >
+          {alertData.error || alertData.message}
+        </Alert>
+      </Snackbar></>
   );
 };
 

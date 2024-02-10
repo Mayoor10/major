@@ -5,7 +5,7 @@ const Post =mongoose.model("Post")
 const requireLogin=require('../middlewares/requireLogin')
 
 router.post('/createPost',requireLogin,(req,res)=>{
-    const {title,desc}=req.body
+    const {title,desc,pic}=req.body
     if(!title || !desc){
         return res.status(422).json({error:"Fill all fields"})
     }
@@ -14,6 +14,7 @@ router.post('/createPost',requireLogin,(req,res)=>{
     const post = new Post({
         title:title,
         desc:desc,
+        photo:pic,
         postedBy:req.user//refactor this later 
     })
     post.save()

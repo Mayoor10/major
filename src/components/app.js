@@ -18,7 +18,9 @@ require('./models/users');
 require('./models/post');
 
 // Use the cors middleware
-app.use(cors());
+app.use(cors({
+  origin: ['http://localhost:3001', 'http://localhost:5173']
+}));
 
 app.use(express.json());
 app.use(require('./routes/auth'));

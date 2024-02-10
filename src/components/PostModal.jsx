@@ -1,17 +1,96 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styled from "styled-components";
 import ReactPlayer from "react-player";
-import { connect } from "react-redux";
-import firebase from "firebase/compat/app";
 import { postArticleAPI } from "../actions";
 import PropTypes from 'prop-types';
-
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
+import { useNavigate } from 'react-router-dom';
 
 const PostModal = (props) => {
   const [editorText, setEditorText] = useState("");
   const [shareImage, setShareImage] = useState("");
   const [videoLink, setVideoLink] = useState("");
   const [assetArea, setAssetArea] = useState("");
+  const [url, setUrl] = useState("");
+  const [alertData, setAlertData] = useState({ error: null, message: null });
+  const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = new FormData();
+        data.append("file", shareImage);
+        data.append("upload_preset", "Career-Sync");
+        data.append("cloud_name", "dxeiqmcai");
+
+        const cloudinaryResponse = await fetch(
+          "https://api.cloudinary.com/v1_1/dxeiqmcai/image/upload",
+          {
+            method: "post",
+            body: data,
+          }
+        );
+        const cloudinaryData = await cloudinaryResponse.json();
+        setUrl(cloudinaryData.url);
+      } catch (error) {
+        console.error("Error uploading image to Cloudinary:", error);
+        // Handle error appropriately, perhaps set an error state
+      }
+    };
+
+    if (shareImage) {
+      fetchData();
+    }
+  }, [shareImage]);
+
+  useEffect(() => {
+    const createPost = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/createPost", {
+          method: "post",
+          headers: {
+            'Content-Type': "application/json",
+            'Authorization': "Bearer " + localStorage.getItem("jwt"),
+          },
+          body: JSON.stringify({
+            body: editorText,
+            photo: url,
+          }),
+        });
+        const data = await response.json();
+
+        if (data.error) {
+          setAlertData({ error: data.error, message: null });
+        } else {
+          navigate('/home');
+          setAlertData({ error: null, message: data.message });
+          console.log(data);
+        }
+
+        handleClick(); // Trigger Snackbar when data is received
+      } catch (error) {
+        console.error('Error creating post:', error);
+        // Handle error appropriately, perhaps set an error state
+      }
+    };
+
+    if (url) {
+      createPost();
+    }
+  }, [url, editorText, navigate]);
+
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpen(false);
+  };
+
+  const handleClick = () => {
+    setOpen(true);
+  };
 
   const handleChange = (e) => {
     const image = e.target.files[0];
@@ -28,25 +107,6 @@ const PostModal = (props) => {
     setShareImage("");
     setVideoLink("");
     setAssetArea(area);
-  };
-
-  const postArticle = (e) => {
-    e.preventDefault();
-
-    if (e.target !== e.currentTarget) {
-      return;
-    }
-
-    const payload = {
-      image: shareImage,
-      video: videoLink,
-      user: props.user,
-      description: editorText,
-      timestamp: firebase.firestore.Timestamp.now(),
-    };
-
-    props.postArticle(payload);
-    reset(e);
   };
 
   const reset = (e) => {
@@ -72,14 +132,7 @@ const PostModal = (props) => {
             </Header>
             <SharedContent>
               <UserInfo>
-                {props.user.photoURL ? (
-                  <img src={props.user.photoURL} alt="" />
-                ) : (
-                  <img src="/images/user.svg" alt="" />
-                )}
-                <span>
-                  {props.user.displayName ? props.user.displayName : "Name"}
-                </span>
+                {/* User information rendering */}
               </UserInfo>
 
               <Editor>
@@ -89,7 +142,7 @@ const PostModal = (props) => {
                   placeholder="What do you want to talk about?"
                   autoFocus={true}
                 />
-                {assetArea === "image" ? (
+                {assetArea === "image" && (
                   <UploadImage>
                     <input
                       type="file"
@@ -106,20 +159,19 @@ const PostModal = (props) => {
                       <img src={URL.createObjectURL(shareImage)} alt="" />
                     )}
                   </UploadImage>
-                ) : (
-                  assetArea === "media" && (
-                    <>
-                      <input
-                        type="text"
-                        placeholder="Please input a video link"
-                        value={videoLink}
-                        onChange={(e) => setVideoLink(e.target.value)}
-                      />
-                      {videoLink && (
-                        <ReactPlayer width={"100%"} url={videoLink} />
-                      )}
-                    </>
-                  )
+                )}
+                {assetArea === "media" && (
+                  <>
+                    <input
+                      type="text"
+                      placeholder="Please input a video link"
+                      value={videoLink}
+                      onChange={(e) => setVideoLink(e.target.value)}
+                    />
+                    {videoLink && (
+                      <ReactPlayer width={"100%"} url={videoLink} />
+                    )}
+                  </>
                 )}
               </Editor>
             </SharedContent>
@@ -130,7 +182,6 @@ const PostModal = (props) => {
                   alt=""
                   onClick={() => switchAssetArea("image")}
                 />
-
                 <img
                   src="/images/share-video.svg"
                   alt=""
@@ -141,27 +192,26 @@ const PostModal = (props) => {
                 <img src="/images/share-comment.svg" alt="" />
                 Anyone
               </ShareComment>
-
-              <PostButton
-                disabled={!editorText ? true : false}
-                onClick={(event) => postArticle(event)}
-              >
-                Post
-              </PostButton>
+              <PostButton onClick={handleClick}>Post</PostButton>
             </SharedCreation>
           </Content>
         </Container>
       )}
+      <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+        <Alert onClose={handleClose} severity={alertData.error ? 'error' : 'success'}>
+          {alertData.error || alertData.message}
+        </Alert>
+      </Snackbar>
     </>
   );
 };
 
 PostModal.propTypes = {
-    showModal: PropTypes.string.isRequired,
-    user: PropTypes.object, // You can specify the shape of the 'user' prop if needed.
-    handleClick: PropTypes.func.isRequired,
-    postArticle: PropTypes.func.isRequired,
-  };
+  showModal: PropTypes.string.isRequired,
+  user: PropTypes.object,
+  handleClick: PropTypes.func.isRequired,
+  postArticle: PropTypes.func.isRequired,
+};
 
 const Container = styled.div`
   position: fixed;
@@ -221,7 +271,6 @@ const SharedContent = styled.div`
   flex-direction: column;
   flex-grow: 1;
   overflow-y: auto;
-  vertical-align: baseline;
   background: transparent;
 `;
 
@@ -265,6 +314,7 @@ const AttachAssets = styled.div`
     margin-right: 3px;
     cursor: pointer;
   }
+
   img:hover {
     background-color: rgba(0, 0, 0, 0.15);
   }
@@ -348,14 +398,4 @@ const UploadImage = styled.div`
   }
 `;
 
-const mapStateToProps = (state) => {
-  return {
-    user: state.userState.user,
-  };
-};
-
-const mapDispatchToProps = (dispatch) => ({
-  postArticle: (payload) => dispatch(postArticleAPI(payload)),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(PostModal);
+export default PostModal;

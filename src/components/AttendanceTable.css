@@ -1,0 +1,21 @@
+/* AttendanceTable.css */
+
+.title {
+    font-weight: bold;
+    margin-bottom: 20px; /* Add space below the title */
+  }
+  
+  .heading {
+    font-weight: bold;
+  }
+  
+  .sub-heading {
+    font-weight: bold;
+    margin-top: 20px; /* Add space above the sub-heading */
+    margin-bottom: 10px; /* Add space below the sub-heading */
+  }
+
+button {
+    background-color: red;
+}  
+  

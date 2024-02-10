@@ -7,7 +7,8 @@ import SignUp from "./components/UserLogin/SignUp";
 import { useEffect } from "react";
 import { getUserAuth } from "./actions";
 import { connect } from "react-redux";
-
+import PostModal from "./components/PostModal";
+import AttendanceTable from './components/AttendanceTable'; 
 function App(props) {
   useEffect(() => {
     props.getUserAuth();
@@ -19,12 +20,15 @@ function App(props) {
         <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
+          {/* <Route path="/create" element={<PostModal/>} /> */}
+          <Route path="/attendance" element={<AttendanceTable />} />
+
 
           <Route
             path="/home"
             element={
               <>
-                <Header />
+                {/* <Header /> */}
                 <Home />
               </>
             }
