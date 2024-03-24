@@ -1,49 +1,21 @@
+import React from "react";
 import styled from "styled-components";
 import { connect } from "react-redux";
 import { signInAPI } from "../actions";
 import { Navigate } from "react-router-dom";
 import PropTypes from 'prop-types';
+import { useState } from "react";
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
+import { useNavigate } from 'react-router-dom';
 
+// Import images
+import emailIcon from "../../public/images/email.png";
+import passwordIcon from "../../public/images/password.png";
 
-const Login = (props) => {
-  return (
-    <Container>
-      {props.user && <Navigate to="/home" />}
-      <Nav>
-        <a href="/">
-          <img src="/images/login-logo.svg" alt=""></img>
-        </a>
-        <div>
-          <Join>Join now</Join>
-          <SignIn>Sign in</SignIn>
-        </div>
-      </Nav>
-      <Section>
-        <Hero>
-          <h1>Welcome to your professional community</h1>
-          <img src="/images/login-hero.svg" alt="" />
-        </Hero>
-        <Form>
-          <Google onClick={() => props.signIn()}>
-            <img src="/images/google.svg" alt="" />
-            Continue with Google
-          </Google>
-        </Form>
-      </Section>
-    </Container>
-  );
-};
-
-Login.propTypes = {
-    user: PropTypes.shape({
-      // Define the shape of the 'user' prop, e.g., photoURL, displayName, etc.
-    }),
-    signIn: PropTypes.func.isRequired,
-  };
-  
-
+// Styled components
 const Container = styled.div`
-  padding: 0px;
+  padding: 20px;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 `;
 
@@ -58,7 +30,7 @@ const Nav = styled.nav`
   flex-wrap: nowrap;
 
   & img {
-    width: 90px;
+    width: 120px;
   }
 `;
 
@@ -141,23 +113,19 @@ const Hero = styled.div`
 
   h1 {
     padding-bottom: 0;
-    width: 55%;
-    font-size: 56px;
+    width: 50%;
+    font-size: 53px;
     color: #2977c9;
     font-weight: 100;
-    /* line-height: 70px; */
     margin-bottom: 24px;
 
     @media (max-width: 1000px) {
-      /* text-align: center; */
       font-size: 32px;
       width: 100%;
-      /* line-height: 2; */
     }
   }
 
   img {
-    /* z-index: -1; */
     width: 700px;
     height: 670px;
     position: absolute;
@@ -174,21 +142,88 @@ const Hero = styled.div`
 `;
 
 const Form = styled.div`
-  margin-top: 100px;
-  width: 408px;
+  height:400px;
+  // background-color:red;
+  // margin-top: 10px;
+  width: 500px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
 
   @media (max-width: 1000px) {
     margin-top: 20px;
   }
 `;
 
-const Google = styled.button`
+const InputContainer = styled.div`
+  display: flex;
+  margin-bottom: 6px;
+  gap:10px;
+  align-items: center;
+
+`;
+
+
+const Icons = styled.div`
+  width:5%
+  margin:15px
+  background-color:red;
+`;
+
+
+const SubmitButton = styled.div`
+text-align: center;
+  margin-top: 16px;
+  width:75%;
+  background-color: #0a66c2;
+  color: #fff;
+  padding: 12px 24px;
+  border-radius: 24px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+  align-self: center;
+
+  &:hover {
+    background-color: #004080;
+  }
+`;
+
+
+
+const AccountText = styled.div`
+  margin-top: 16px;
+  text-align: center;
+  color: rgba(0, 0, 0, 0.6);
+
+  a {
+    color: #0a66c2;
+    text-decoration: none;
+    font-weight: 600;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+`;
+
+const Input = styled.input`
+width: 90%; 
+border: none;
+outline: none;
+padding: 12px;
+border: 1px solid #ccc;
+border-radius: 10px;
+font-size: 16px;
+`;
+
+const GoogleButton = styled.button`
   display: flex;
   justify-content: center;
   align-items: center;
   background-color: #fff;
-  height: 56px;
-  width: 100%;
+  height: 45px;
+  width: 85%;
   border-radius: 28px;
   box-shadow: inset 0 0 0 1px rgb(0 0 0 / 60%),
     inset 0 0 0 2px rgb(0 0 0 / 0%) inset 0 0 0 1px rgb(0 0 0 / 0);
@@ -200,6 +235,8 @@ const Google = styled.button`
   color: rgba(0, 0, 0, 0.75);
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   cursor: pointer;
+  align-self: center;
+  margin:10px;
 
   &:hover {
     background-color: rgba(207, 207, 207, 0.25);
@@ -209,6 +246,132 @@ const Google = styled.button`
     margin: 0 5px;
   }
 `;
+
+// React component
+const Login = (props) => {
+
+  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('');
+  const [alertData, setAlertData] = useState({ error: null, message: null });
+  const navigate = useNavigate();
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setOpen(false);
+  };
+  const [open, setOpen] = useState(false);
+
+  const handleClick = () => {
+    setOpen(true);
+  };
+  const isValidEmail = () => {
+    // Simple email validation using a regular expression
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const Data = () => {
+    if (!isValidEmail()) {
+      setAlertData({ error: 'Invalid Email !!', message: null });
+      handleClick();
+      return;
+    }
+    fetch('http://localhost:5000/signIn', {
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        password: password,
+        email: email,
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.error) {
+          setAlertData({ error: data.error, message: null });
+        } else {
+          localStorage.setItem("jwt",data.token)
+          localStorage.setItem("user",JSON.stringify(data))
+          setAlertData({ error: null, message: data.message });
+          console.log(data);
+          navigate('/home')
+
+        }
+        handleClick(); // Trigger Snackbar when data is received
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+        // Handle error appropriately, perhaps set an error state
+      });
+  };
+  return (
+    <>
+    <Container>
+      {props.user && <Navigate to="/home" />}
+      <Nav>
+        <a href="/">
+          {/* <img src="/images/login-logo.svg" alt="" /> */}
+        </a>
+        <div>
+          <Join>Join now</Join>
+          <SignIn>Sign in</SignIn>
+        </div>
+      </Nav>
+      <Section>
+        <Hero>
+          {/* <h1>Welcome to your professional community</h1> */}
+          {/* <img src="/images/login-hero.svg" alt="" /> */}
+        </Hero>
+        <Form>
+          <InputContainer>
+            <Icons>
+              <img src={emailIcon} alt="" />
+            </Icons>
+            <input type="email" placeholder='Email'
+          value={email} onChange={(e)=>setEmail(e.target.value)}/>
+
+          </InputContainer>
+          <InputContainer>
+            <Icons>
+              <img src={passwordIcon} alt="" />
+            </Icons>
+            <input type="password" placeholder='Password'
+          value = {password} onChange={(e)=>{setPassword(e.target.value)}}/>
+          </InputContainer>
+
+          <SubmitButton onClick={() => Data()}>Sign In</SubmitButton>
+
+
+          <AccountText>Not a member? <a href="/SignUp">Sign Up</a></AccountText>
+          <GoogleButton onClick={() => props.signIn()}>
+            <img src="/images/google.svg" alt="" />
+            Continue with Google
+          </GoogleButton>
+        </Form>
+      </Section>
+    </Container>
+      <Snackbar open={open} autoHideDuration={1000} onClose={handleClose}>
+        <Alert
+          onClose={handleClose}
+          severity={alertData.error ? 'error' : 'success'}
+          variant="filled"
+          sx={{ width: '100%' }}
+        >
+          {alertData.error || alertData.message}
+        </Alert>
+      </Snackbar></>
+  );
+};
+
+Login.propTypes = {
+  user: PropTypes.shape({
+    // Define the structure of the 'user' prop, e.g., photoURL, displayName, etc.
+  }),
+  signIn: PropTypes.func.isRequired,
+};
 
 const mapStateToProps = (state) => {
   return {
