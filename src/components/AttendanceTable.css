@@ -1,21 +1,68 @@
-/* AttendanceTable.css */
+.container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* Two equal columns */
+  gap: 20px; /* Gap between the columns */
+}
 
 .title {
-    font-weight: bold;
-    margin-bottom: 20px; /* Add space below the title */
-  }
-  
-  .heading {
-    font-weight: bold;
-  }
-  
-  .sub-heading {
-    font-weight: bold;
-    margin-top: 20px; /* Add space above the sub-heading */
-    margin-bottom: 10px; /* Add space below the sub-heading */
-  }
+  grid-column: span 2; /* Spanning two columns for the title */
+}
 
-button {
-    background-color: red;
-}  
-  
+.table-container {
+  grid-column: span 1; /* Spanning one column for the table */
+  overflow-x: auto; /* Enable horizontal scrolling if needed */
+}
+
+.attendance-table {
+  width: 100%; /* Full width within its container */
+}
+
+/* Adjust column widths */
+.attendance-table th,
+.attendance-table td {
+  white-space: nowrap; /* Prevent line breaks */
+  padding: 8px; /* Adjust padding as needed */
+}
+
+/* Narrow the last column */
+.attendance-table th:last-child,
+.attendance-table td:last-child {
+  width: 100px; /* Adjust the width as per your requirement */
+}
+/* Calendar styles */
+.calendar-container {
+  position: relative; /* Set the position of the container to relative */
+  grid-column: span 1; /* Spanning one column for the calendar */
+}
+
+.calendar-wrapper {
+  position: absolute; /* Set the position of the calendar wrapper to absolute */
+  top: 0; /* Align the calendar wrapper to the top */
+  right: 0; /* Align the calendar wrapper to the right */
+}
+
+.attendance-table .heading {
+  font-size: 18px;
+  font-weight: bold;
+  background-color: #f0f0f0;
+}
+
+.attendance-table .sub-heading {
+  font-size: 16px;
+  font-weight: bold;
+  background-color: #e0e0e0;
+}
+
+.back-btn {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+/*  */
+.back-btn:hover {
+  background-color: #0056b3;
+}

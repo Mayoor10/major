@@ -1,20 +1,19 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { FaCalendar } from 'react-icons/fa'; // Import FaCalendar icon
 import './AttendanceTable.css'; // Import CSS file for styling
-import { useNavigate } from "react-router-dom";
-
-
+import Calendar from './Calendar'; // Assuming './Calendar' is the path to your Calendar component file
 
 const AttendanceTable = () => {
-  
   const [attendanceData, setAttendanceData] = useState([]);
   const history = useNavigate(); // Initialize useHistory hook
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [loading, setLoading] = useState(true);
 
   // Function to handle navigation back to detection page
   const handleBackToDetection = () => {
     history('/home'); // Navigate to detection page
   };
-  
-
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -24,7 +23,6 @@ const AttendanceTable = () => {
         }
         const data = await response.json();
         console.log(data);
-
         // Define dummy classes with status "Absent"
         const dummyClasses = {
           "amey": "Absent",
@@ -67,54 +65,88 @@ const AttendanceTable = () => {
 
           return accumulator;
         }, []);
+        const formattedSelectedDate = selectedDate.toLocaleDateString('en-US');
+        const filteredData = processedData.filter(entry => {
+          const entryDate = new Date(entry.timestamp).toLocaleDateString('en-US');
+          console.log(entryDate);
+          return entryDate === formattedSelectedDate;
+        });
+        console.log(selectedDate);
 
-        setAttendanceData(processedData);
+        console.log(filteredData);
+
+        setAttendanceData(filteredData);
+        setLoading(false);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
     };
 
     fetchData();
-  }, []);
-  
+  }, [selectedDate]);
 
   return (
-    <div>
-      <h2 className="title">Attendance Management Table</h2>
-      <table>
-        <thead>
-          <tr>
-            <th colSpan="4" className="heading">Attendance for {attendanceData.length > 0 && `${attendanceData[0].date}, ${attendanceData[0].dayOfWeek}`}</th> {/* Display the date in "9th February 2024, Friday" format */}
-          </tr>
-          <tr>
-            <th>Sr. No</th>
-            <th>Name</th>
-            <th>Status</th>
-            <th>Timestamp</th>
-          </tr>
-        </thead>
-        <tbody>
-          {attendanceData.map((entry) => (
-            <>
-              <tr key={`heading_${entry._id}`}>
-                <td colSpan="4" className="sub-heading">Attendance for {`${entry.date}, ${entry.dayOfWeek}`}</td> {/* Display the date in "9th February 2024, Friday" format */}
-              </tr>
-              {Object.entries(entry.class_presence).map(([name, status], index) => (
-                <tr key={`${entry._id}_${name}`}>
-                  <td>{index + 1}</td> {/* Increment index to generate unique sequential IDs */}
-                  <td>{name}</td>
-                  <td>{status}</td>
-                  <td>{entry.timestamp}</td>
-                </tr>
-              ))}
-              <tr key={`spacer_${entry._id}`}><td colSpan="4">&nbsp;</td></tr> {/* Insert empty row for space */}
-            </>
-          ))}
-        </tbody>
-      </table>
-      <div>
-      <button onClick={handleBackToDetection}>Back to Detection</button> {/* Button to navigate back to detection page */}
-    </div>
+    <div className="container">
+      <div className="content">
+        <div className="attendance-table-container">
+          <div className="grid-container">
+            <div className="grid-item left-grid">
+              <h2 className="title">Attendance Management Table</h2>
+              <div className="table-container">
+                <table className="attendance-table">
+                  <thead>
+                    <tr>
+                      <th colSpan="4" className="heading">Attendance for {attendanceData.length > 0 && `${attendanceData[0].date}, ${attendanceData[0].dayOfWeek}`}</th>
+                    </tr>
+                    <tr>
+                      <th>Sr. No</th>
+                      <th>Name</th>
+                      <th>Status</th>
+                      <th>Timestamp</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  {loading ? (
+                      <tr>
+                        <td colSpan="5">Loading...</td>
+                      </tr>
+                    ) : attendanceData.length === 0 ? (
+                      <tr>
+                        <td colSpan="5">No attendance data on {selectedDate.toLocaleDateString('en-US')}</td>
+                      </tr>
+                    ) : (
+                    attendanceData.map((entry) => (
+                      <React.Fragment key={`heading_${entry._id}`}>
+                        <tr>
+                          <td colSpan="4" className="sub-heading">Attendance for {`${entry.date}, ${entry.dayOfWeek}`}</td>
+                        </tr>
+                        {Object.entries(entry.class_presence).map(([name, status], index) => (
+                          <tr key={`${entry._id}_${name}`}>
+                            <td>{index + 1}</td>
+                            <td>{name}</td>
+                            <td>{status}</td>
+                            <td>{entry.timestamp}</td>
+                          </tr>
+                        ))}
+                        <tr key={`spacer_${entry._id}`}>
+                          <td colSpan="4">&nbsp;</td>
+                        </tr>
+                      </React.Fragment>
+                    ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+              <div>
+                <button className="back-btn" onClick={handleBackToDetection}>Back to Detection</button>
+              </div>
+            </div>
+            <div className="grid-item right-grid">
+              <Calendar selectedDate={selectedDate} setSelectedDate={setSelectedDate} />
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

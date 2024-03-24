@@ -8,6 +8,7 @@ import user_icon from '..//..//../public/images/person.png';
 import email_icon from '..//..//../public/images/email.png';
 import password_icon from '..//..//../public/images/password.png';
 
+
 const SignUp = () => {
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {

@@ -313,7 +313,7 @@ const Login = (props) => {
       {props.user && <Navigate to="/home" />}
       <Nav>
         <a href="/">
-          <img src="/images/login-logo.svg" alt="" />
+          {/* <img src="/images/login-logo.svg" alt="" /> */}
         </a>
         <div>
           <Join>Join now</Join>
@@ -322,8 +322,8 @@ const Login = (props) => {
       </Nav>
       <Section>
         <Hero>
-          <h1>Welcome to your professional community</h1>
-          <img src="/images/login-hero.svg" alt="" />
+          {/* <h1>Welcome to your professional community</h1> */}
+          {/* <img src="/images/login-hero.svg" alt="" /> */}
         </Hero>
         <Form>
           <InputContainer>

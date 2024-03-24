@@ -81,7 +81,7 @@ function Portal() {
         <span className="text-transparent bg-clip-text bg-gradient-to-r to-violet-600 from-blue-900">
           Machine Learning Model to
         </span>
-        <br /> Detect cats & Dogs
+        <br /> Detect Students
       </h1>
       <p className="text-lg font-normal text-white lg:text-xl">
         Upload the image file to detect.

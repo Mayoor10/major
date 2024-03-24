@@ -13,7 +13,7 @@ function App(props) {
   useEffect(() => {
     props.getUserAuth();
   }, []);
-
+  
   return (
     <div className="App">
       <Router>
@@ -22,7 +22,6 @@ function App(props) {
           <Route path="/signup" element={<SignUp />} />
           {/* <Route path="/create" element={<PostModal/>} /> */}
           <Route path="/attendance" element={<AttendanceTable />} />
-
 
           <Route
             path="/home"
